@@ -1,0 +1,23 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+.DS_Store
+package-lock.json
+NEXT.md
+playwright-report/
+test-results/
+.playwright-runs/
+client/dist/
+server/dist/
+mcp/dist/
+
+# IDE / tool session artifacts (not project source)
+.playwright-mcp/
+.superpowers/
+.remember/
+
+# Source archives / bundles (not repo content)
+*.tar.gz
+*.bundle

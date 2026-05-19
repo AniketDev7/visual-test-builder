@@ -1,0 +1,21 @@
+{
+  "name": "visualflow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-augmented visual test builder — record, compose, and run Playwright tests with no code.",
+  "workspaces": [
+    "server",
+    "client",
+    "mcp"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,magenta \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "npm run dev --workspace server",
+    "dev:client": "npm run dev --workspace client",
+    "build": "npm run build --workspace server && npm run build --workspace client",
+    "typecheck": "npm run typecheck --workspace server && npm run typecheck --workspace client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
