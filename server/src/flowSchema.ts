@@ -77,7 +77,7 @@ export interface Step {
 export const StepSchema: z.ZodType<Step> = z.lazy(() =>
   z.object({
     id: z.string(),
-    label: z.string().optional(),
+    label: z.string().regex(/^[^\r\n]*$/).optional(),
     type: z.enum(["navigate", "click", "fill", "assert", "apiCall", "loop", "if"]),
     url: z.string().optional(),
     target: LocatorSchema.optional(),
@@ -96,7 +96,7 @@ export const StepSchema: z.ZodType<Step> = z.lazy(() =>
         source: z.enum(["dataset", "range"]),
         dataset: z.array(z.record(z.unknown())).optional(),
         count: z.number().int().positive().optional(),
-        as: z.string(),
+        as: z.string().regex(/^[A-Za-z_][A-Za-z0-9_]{0,31}$/, "must be a valid JS identifier"),
       })
       .optional(),
     condition: z.object({ target: LocatorSchema, present: z.boolean() }).optional(),
