@@ -1,0 +1,24 @@
+fileignoreconfig:
+- filename: .env.example
+  checksum: 9e0065968cb1c02715aa3450d5c4608db27103631e858e7732d8f6d6f65abe8c
+- filename: client/src/App.tsx
+  checksum: 9e66f9eaf2e27699a588ab10ddad792a15972541ca5686bd51a38850a9921356
+- filename: client/src/components/Copilot.tsx
+  checksum: aa3da53ad21814459b67229ec5aa61b4f75299ffbebaa0abd3f5294bf1eae0cc
+- filename: client/src/components/FlowCanvas.tsx
+  checksum: 8ea384801910bf7c16357da2307c7a2e5c5b7e110a26f69070a8e7230cdd3335
+- filename: client/src/components/RunPanel.tsx
+  checksum: a21fd9b950a4f4f283d71fa0b6c86372b2ac66140c0f36baea575221d9c37b1a
+- filename: mcp/src/index.ts
+  checksum: 9b91aa175f9178756eca4bb4566400a99e8cf7e7a6de740d7c68fc67b4659c6a
+- filename: README.md
+  checksum: fedd1782935435446f33b642da64cc174fc017afa05614cf3f9fcd50392c665e
+- filename: server/src/ai/author.ts
+  checksum: 8db93a578fe3a2e3b80086896febe306eb4050f599e8e881126737aa173ee8f9
+- filename: server/src/ai/client.ts
+  checksum: a134884a5537714ee070746e98a90bb0105714e2d8ce53860a43ea6d209addcc
+- filename: server/src/index.ts
+  checksum: 6571850f3b5d7eb62925b1c605966bd33d6997e4dcb789f84e1abb89fed52bf5
+- filename: server/src/runner.ts
+  checksum: 12f02874483e23de4e082fe440424891234867627eb53ba7b721ca7ba1e207b9
+version: "1.0"
