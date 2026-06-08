@@ -36,6 +36,15 @@ interface Session {
 
 const sessions = new Map<string, Session>();
 
+/** Reject private/loopback destinations before launching a browser at them. */
+function requirePublicHttpUrl(raw: string): void {
+  const u = new URL(raw);
+  if (!["http:", "https:"].includes(u.protocol)) throw new Error("Only http/https URLs allowed");
+  const h = u.hostname.toLowerCase();
+  const blocked = [/^localhost$/, /^127\./, /^10\./, /^172\.(1[6-9]|2\d|3[01])\./, /^192\.168\./, /^169\.254\./, /^::1$/, /^0\.0\.0\.0$/];
+  if (blocked.some((r) => r.test(h))) throw new Error("Private/loopback URLs are not allowed");
+}
+
 /**
  * Injected into the recorded page. Given a DOM element, it computes the most
  * resilient locator we can — this is the core QA value: stable selectors
@@ -90,7 +99,8 @@ const RECORDER_BOOTSTRAP = `
   document.addEventListener('change', (e) => {
     const el = e.target;
     if (['INPUT','TEXTAREA','SELECT'].includes(el.tagName)) {
-      send({ action: 'fill', locator: bestLocator(el), text: el.value, ts: Date.now() });
+      const val = (el.getAttribute('type') || '').toLowerCase() === 'password' ? '' : el.value;
+      send({ action: 'fill', locator: bestLocator(el), text: val, ts: Date.now() });
     }
   }, true);
 })();
@@ -101,6 +111,7 @@ export const recorderApi = Router();
 recorderApi.post("/start", async (req, res) => {
   const url = String(req.body?.url ?? "").trim();
   if (!url) return res.status(400).json({ error: "url required" });
+  try { requirePublicHttpUrl(url); } catch (e) { return res.status(400).json({ error: (e as Error).message }); }
 
   const session: Session = { id: nanoid(8), url, events: [{ action: "navigate", url, ts: Date.now() }], status: "recording" };
 
@@ -138,7 +149,12 @@ recorderApi.post("/start", async (req, res) => {
 recorderApi.post("/:id/event", (req, res) => {
   const s = sessions.get(req.params.id);
   if (!s) return res.status(404).json({ error: "no such session" });
-  s.events.push({ ts: Date.now(), ...req.body });
+  const b = req.body ?? {};
+  const ev: RawEvent = { action: b.action, ts: Date.now() };
+  if (b.locator != null) ev.locator = b.locator;
+  if (b.url != null) ev.url = String(b.url);
+  if (b.text != null) ev.text = String(b.text);
+  s.events.push(ev);
   res.json({ count: s.events.length });
 });
 

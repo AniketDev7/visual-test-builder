@@ -5,7 +5,7 @@ import { recorderApi } from "./recorder.js";
 import { AI_LIVE } from "./ai/client.js";
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json({ limit: "2mb" }));
 
 app.use("/api", api);

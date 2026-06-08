@@ -10,7 +10,7 @@ fileignoreconfig:
 - filename: client/src/components/RunPanel.tsx
   checksum: a21fd9b950a4f4f283d71fa0b6c86372b2ac66140c0f36baea575221d9c37b1a
 - filename: mcp/src/index.ts
-  checksum: 9b91aa175f9178756eca4bb4566400a99e8cf7e7a6de740d7c68fc67b4659c6a
+  checksum: fd90d0f68963cf7e3e4c104ab09961c25d01de9d26319aaca99de8fda2b728b7
 - filename: README.md
   checksum: fedd1782935435446f33b642da64cc174fc017afa05614cf3f9fcd50392c665e
 - filename: server/src/ai/author.ts
@@ -18,7 +18,9 @@ fileignoreconfig:
 - filename: server/src/ai/client.ts
   checksum: a134884a5537714ee070746e98a90bb0105714e2d8ce53860a43ea6d209addcc
 - filename: server/src/index.ts
-  checksum: 6571850f3b5d7eb62925b1c605966bd33d6997e4dcb789f84e1abb89fed52bf5
+  checksum: 1d347ee121461597dfc34900f70f78f853b6259d8d84edae0fb0acdeb935cd8d
+- filename: server/src/recorder.ts
+  checksum: 42fc33651939c41c7697c5e3e3d59767e0d964d62b4ad481e8590e4e2c88636d
 - filename: server/src/runner.ts
   checksum: 12f02874483e23de4e082fe440424891234867627eb53ba7b721ca7ba1e207b9
 version: "1.0"

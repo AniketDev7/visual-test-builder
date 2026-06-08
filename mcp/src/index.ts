@@ -18,6 +18,18 @@ import { z } from "zod";
 
 const BASE = process.env.VISUALFLOW_URL ?? "http://localhost:4000";
 
+/** Only alphanumeric, dash, underscore — no path-traversal characters. */
+const safeId = z.string().regex(/^[A-Za-z0-9_-]{1,64}$/, "invalid id");
+
+/** Reject private/loopback destinations before forwarding to the recorder. */
+function requirePublicHttpUrl(raw: string): void {
+  const u = new URL(raw);
+  if (!["http:", "https:"].includes(u.protocol)) throw new Error("Only http/https URLs allowed");
+  const h = u.hostname.toLowerCase();
+  const blocked = [/^localhost$/, /^127\./, /^10\./, /^172\.(1[6-9]|2\d|3[01])\./, /^192\.168\./, /^169\.254\./, /^::1$/, /^0\.0\.0\.0$/];
+  if (blocked.some((r) => r.test(h))) throw new Error("Private/loopback URLs are not allowed");
+}
+
 async function call(path: string, init?: RequestInit): Promise<unknown> {
   const res = await fetch(`${BASE}${path}`, {
     ...init,
@@ -48,9 +60,9 @@ server.tool(
 server.tool(
   "author_flow",
   "Turn a plain-English testing instruction into structured, schema-valid test steps. Optionally append them to an existing flow by id.",
-  { instruction: z.string(), flowId: z.string().optional() },
+  { instruction: z.string(), flowId: safeId.optional() },
   async ({ instruction, flowId }) => {
-    const path = flowId ? `/api/flows/${flowId}/ai/author` : "/api/ai/author";
+    const path = flowId ? `/api/flows/${encodeURIComponent(flowId)}/ai/author` : "/api/ai/author";
     return ok(await call(path, { method: "POST", body: JSON.stringify({ instruction }) }));
   }
 );
@@ -59,35 +71,38 @@ server.tool(
   "start_recording",
   "Open a live browser at the given URL and begin recording QA actions (clicks, typing, navigation). No application source code is required.",
   { url: z.string().url() },
-  async ({ url }) => ok(await call("/api/recorder/start", { method: "POST", body: JSON.stringify({ url }) }))
+  async ({ url }) => {
+    requirePublicHttpUrl(url);
+    return ok(await call("/api/recorder/start", { method: "POST", body: JSON.stringify({ url }) }));
+  }
 );
 
 server.tool(
   "stop_recording",
   "Stop a recording session and return the raw captured events.",
-  { sessionId: z.string() },
-  async ({ sessionId }) => ok(await call(`/api/recorder/${sessionId}/stop`, { method: "POST" }))
+  { sessionId: safeId },
+  async ({ sessionId }) => ok(await call(`/api/recorder/${encodeURIComponent(sessionId)}/stop`, { method: "POST" }))
 );
 
 server.tool(
   "refine_recording",
   "Convert a recording's raw events into a clean, labelled test flow with suggested assertions.",
-  { sessionId: z.string() },
-  async ({ sessionId }) => ok(await call(`/api/recorder/${sessionId}/refine`, { method: "POST" }))
+  { sessionId: safeId },
+  async ({ sessionId }) => ok(await call(`/api/recorder/${encodeURIComponent(sessionId)}/refine`, { method: "POST" }))
 );
 
 server.tool(
   "generate_code",
   "Generate the Playwright test source for a saved flow.",
-  { flowId: z.string() },
-  async ({ flowId }) => ok(await call(`/api/flows/${flowId}/code`))
+  { flowId: safeId },
+  async ({ flowId }) => ok(await call(`/api/flows/${encodeURIComponent(flowId)}/code`))
 );
 
 server.tool(
   "run_flow",
   "Run a saved flow with Playwright and return pass/fail, output, and (on failure) an AI root-cause analysis.",
-  { flowId: z.string() },
-  async ({ flowId }) => ok(await call(`/api/flows/${flowId}/run`, { method: "POST" }))
+  { flowId: safeId },
+  async ({ flowId }) => ok(await call(`/api/flows/${encodeURIComponent(flowId)}/run`, { method: "POST" }))
 );
 
 server.tool(
