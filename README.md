@@ -1,5 +1,11 @@
 # VisualFlow — AI-Augmented Visual Test Builder
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)]()
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)]()
+[![Playwright](https://img.shields.io/badge/Playwright-1.49-45ba4b?logo=playwright&logoColor=white)]()
+[![Powered by Claude](https://img.shields.io/badge/Powered%20by-Claude%20AI-orange?logo=anthropic)]()
+
 > Record actions on **any live URL** (no source-code access required) and an AI
 > agent writes the automated test behind the scenes. Edit the flow visually,
 > let the AI add steps from plain English, run it on Playwright, and get a
@@ -10,6 +16,8 @@
 VisualFlow is a portfolio project at the seam of **senior QA practice** and
 **applied AI agents**: the test-orchestration domain model is encoded as
 software, and a multi-agent layer sits on top of it.
+
+![VisualFlow UI](./flow.png)
 
 ---
 
@@ -50,22 +58,6 @@ spending tokens.
 
 ---
 
-## Architecture
-
-```
-client/   React + TS         drag-drop canvas · recorder · copilot · run viewer
-server/   Node + Express + TS Flow schema (zod) · codegen · runner · AI agents
-mcp/      MCP server (stdio)  bridges Claude-in-IDE to the same backend
-```
-
-The **Flow schema** (`server/src/flowSchema.ts`) is the single source of truth:
-the canvas edits it, the codegen (`codegen.ts`) compiles it to Playwright, and
-the agents read/write it.
-
-![AI-Driven Test Orchestration Lifecycle](./AI-Driven_Test_Orchestration_Lifecycle.png)
-
----
-
 ## Quick start
 
 ```bash
@@ -102,28 +94,3 @@ generated Playwright code is still shown — every other feature works.)
 
 Build it first with `npm run build`.
 
----
-
-## Project layout
-
-```
-server/src/
-  flowSchema.ts   typed + zod-validated test-flow document (recursive: loops/ifs)
-  codegen.ts      Flow -> Playwright source
-  runner.ts       executes the script, maps errors back to step labels
-  recorder.ts     live-URL recording + resilient locator synthesis + Refiner
-  store.ts        flow persistence (in-memory, swappable)
-  routes.ts       REST API
-  ai/             author · healer · analyst agents + Anthropic client (live/mock)
-mcp/src/index.ts  MCP tools bridging Claude to the backend
-client/src/       React UI: Recorder, Copilot, FlowCanvas, RunPanel
-```
-
-## Status / roadmap
-- [x] Flow schema, codegen, runner
-- [x] Author / Healer / Analyst / Refiner agents (live + mock)
-- [x] Live-URL recorder with resilient locator synthesis
-- [x] MCP server
-- [ ] Trace viewer & screenshot timeline
-- [ ] Persisted run history (DB-backed store)
-- [ ] Auth + multi-user workspaces
